@@ -16,6 +16,11 @@ The **Hybrid Search RAG Pipeline** is a highly optimized, scalable backend desig
 
 Best of all, this entire stack is designed to be **Zero-Cost**—leveraging powerful open-source local models for embeddings and reranking, alongside Google's free-tier Gemini API for generation.
 
+## 📸 Web Interface
+
+*(Place a screenshot of your beautiful dark-mode UI here! Save it as `ui-screenshot.png` in an `assets` folder)*
+![Hybrid Search Web UI](assets/ui-screenshot.png)
+
 ## ✨ Key Features
 
 - **⚡ Blazing Fast Ingestion**: Utilizes `PyMuPDF` and asynchronous thread pools to parse and embed massive textbooks (1000+ pages) in seconds without blocking the API.
