@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Cost RAG Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>RAG Assistant</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="upload-section">
+                    <h3>Data Sources</h3>
+                    <div class="upload-area" id="upload-area">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Drag & Drop or <span class="highlight">Click to Browse</span></p>
+                        <small>Supports PDF, TXT, DOCX</small>
+                        <input type="file" id="file-input" hidden>
+                    </div>
+                    <div id="upload-status" class="status-msg hidden"></div>
+                </div>
+
+                <div class="stats-section">
+                    <h3>System Health</h3>
+                    <div class="health-indicator" id="health-indicator">
+                        <span class="dot"></span>
+                        <span class="text">Checking...</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="label">Indexed Chunks</span>
+                        <span class="value" id="chunk-count">--</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <header class="chat-header">
+                <h2>Hybrid Search Workspace</h2>
+                <div class="badges">
+                    <span class="badge">BGE + BM25</span>
+                    <span class="badge">Gemini Flash</span>
+                </div>
+            </header>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message assistant">
+                    <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="message-content">
+                        <p>Hello! I am your Zero Cost RAG Assistant. Upload a document in the sidebar to get started, or ask me a question about your existing knowledge base!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <form id="chat-form">
+                    <div class="input-wrapper">
+                        <input type="text" id="query-input" placeholder="Ask a question..." autocomplete="off">
+                        <button type="submit" id="send-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

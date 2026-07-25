@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Project specific
+data/
+chroma_db/
+*.pdf
+*.docx
+*.txt
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Docker
+.dockerignore

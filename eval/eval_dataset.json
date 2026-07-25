@@ -1,0 +1,14 @@
+[
+    {
+        "question": "What is the total monthly cost of running this RAG pipeline?",
+        "expected_answer": "$0. The pipeline uses free local open-source components and the free tier of Google Gemini 1.5 Flash."
+    },
+    {
+        "question": "Which two retrieval methods are combined in this Hybrid Search?",
+        "expected_answer": "Dense retrieval using ChromaDB (with BGE embeddings) and Sparse retrieval using BM25."
+    },
+    {
+        "question": "What is used for reranking the retrieved results?",
+        "expected_answer": "A cross-encoder called ms-marco-MiniLM-L-6-v2 is used for reranking."
+    }
+]
