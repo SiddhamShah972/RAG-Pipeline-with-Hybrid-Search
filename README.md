@@ -114,5 +114,5 @@ Results will be output to the console, detailing scores for context precision, r
 
 ---
 <div align="center">
-  <i>Built with ❤️ by Siddham</i>
+  <i>Built by Siddham</i>
 </div>
