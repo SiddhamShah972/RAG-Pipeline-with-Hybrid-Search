@@ -12,9 +12,9 @@
 
 ## 📖 Overview
 
-The **Hybrid Search RAG Pipeline** is a highly optimized, scalable backend designed to allow users to upload massive documents and query them naturally. Unlike standard RAG systems that rely solely on dense vector search, this project implements a **Hybrid Search Architecture** (combining Dense and Sparse retrieval) with a **Cross-Encoder Reranker**, ensuring unparalleled accuracy and context retrieval. 
+The **Ultimate RAG Pipeline** is a highly optimized, scalable backend designed to allow users to upload massive documents and query them naturally. It goes far beyond standard vector search by implementing **Multimodal RAG** (processing tables, charts, and diagrams), a **Knowledge Graph** (GraphRAG) for multi-hop reasoning, and an **Agentic Self-Correcting Loop** to ensure perfectly grounded answers.
 
-Best of all, this entire stack is designed to be **Zero-Cost**—leveraging powerful open-source local models for embeddings and reranking, alongside Google's free-tier Gemini API for generation.
+Best of all, this entire stack is designed to be **Zero-Cost**—leveraging powerful open-source local models for embeddings and reranking, alongside Google's free-tier Gemini 2.0 Flash API for generation, vision, and extraction.
 
 ## 📸 Web Interface
 
@@ -23,33 +23,41 @@ Best of all, this entire stack is designed to be **Zero-Cost**—leveraging powe
 
 ## ✨ Key Features
 
-- **⚡ Blazing Fast Ingestion**: Utilizes `PyMuPDF` and asynchronous thread pools to parse and embed massive textbooks (1000+ pages) in seconds without blocking the API.
-- **🔍 Hybrid Retrieval System**: Combines semantic understanding (Dense Vector Search via `BAAI/bge-base-en-v1.5`) with exact keyword matching (Sparse Search via `BM25`).
-- **🎯 Advanced Reranking**: Uses a cross-encoder (`ms-marco-MiniLM-L-6-v2`) to re-score and perfectly order retrieved contexts before they reach the LLM.
-- **🤖 Grounded Generation**: Powered by **Google Gemini 3.5 Flash**, the system strictly answers based on retrieved context and automatically provides inline citations mapping back to the source document.
-- **📊 Integrated Evaluation Engine**: Built-in automated evaluation pipeline using `Ragas` to score Faithfulness, Answer Relevancy, Context Precision, and Context Recall.
-- **🖥️ Clean Web UI**: A sleek, dark-mode web interface for seamless drag-and-drop document uploading and real-time chat interactions.
+- **📊 Multimodal RAG**: Uses Gemini Vision and pdfplumber to extract and index charts, diagrams, and tables as first-class searchable chunks.
+- **🕸️ GraphRAG**: Automatically builds a Knowledge Graph of entity-relationship triples during ingestion for global multi-hop reasoning.
+- **🤖 Agentic Self-Correction**: If the LLM doesn't find the answer, it autonomously rewrites your query and searches again to ensure groundedness.
+- **🧠 Contextual Chunking**: Text chunks are prepended with document and page-level metadata for massive precision boosts.
+- **💬 Conversation Memory**: Remembers chat history so you can ask follow-up questions naturally.
+- **🌐 Streaming Responses**: Streams tokens to the UI in real-time via Server-Sent Events (SSE).
+- **⚡ Blazing Fast Ingestion**: Supports PDF, DOCX, PPTX, CSV, Excel, HTML, and Markdown.
+- **🔍 Hybrid Retrieval System**: Combines semantic understanding (Dense via `bge-base`) with exact keyword matching (Sparse via `BM25`).
+- **🎯 Advanced Reranking**: Uses a cross-encoder to re-score and perfectly order retrieved contexts.
+
+## 🏗️ Architecture
 
 ## 🏗️ Architecture
 
 ```mermaid
 graph TD
     subgraph Ingestion Pipeline
-        A[Document PDF/TXT] --> B[Text Extraction PyMuPDF]
-        B --> C[Recursive Chunking]
+        A[Document PDF/PPTX/CSV] --> B[Multimodal Extraction]
+        B --> C[Visual/Table/Text Chunks]
         C --> D[BGE Embedding GPU]
         D --> E[(ChromaDB Dense)]
         C --> F[(BM25 Sparse)]
+        C --> G[Entity Extraction]
+        G --> H[(Knowledge Graph)]
     end
 
     subgraph Query Pipeline
-        Q[User Query] --> G[Dense Search Top-K]
-        Q --> H[Sparse Search Top-K]
-        G --> I[Reciprocal Rank Fusion]
-        H --> I
-        I --> J[Cross-Encoder Reranker]
-        J --> K[Gemini 3.5 Flash]
-        K --> L[Grounded Answer w/ Citations]
+        Q[User Query] --> I[Agentic Query Rewriter]
+        I --> J[Dense Search]
+        I --> K[Sparse Search]
+        I --> L[Graph Traversal]
+        J & K & L --> M[Reciprocal Rank Fusion]
+        M --> N[Cross-Encoder Reranker]
+        N --> O[Gemini 2.0 Flash Stream]
+        O --> P[Grounded Answer w/ Citations]
     end
 ```
 
@@ -61,8 +69,9 @@ graph TD
 | **Vector DB** | ChromaDB | Open-source vector database |
 | **Embeddings** | SentenceTransformers | `BAAI/bge-base-en-v1.5` running locally via PyTorch |
 | **Sparse Index** | Rank-BM25 | Keyword-based term frequency indexing |
-| **LLM Provider** | Google Gemini | Generative AI via `models/gemini-3.5-flash` |
-| **Frontend** | Vanilla JS / CSS | Lightweight, responsive interface |
+| **LLM Provider** | Google Gemini | Generative AI and Vision via `gemini-2.0-flash` |
+| **Graph DB** | NetworkX | In-memory triple storage |
+| **Frontend** | Vanilla JS / CSS | Streaming, document management, chat history |
 
 ## 🚀 Getting Started
 

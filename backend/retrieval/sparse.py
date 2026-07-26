@@ -3,7 +3,12 @@ import pickle
 from rank_bm25 import BM25Okapi
 from typing import List, Dict, Any
 
-BM25_INDEX_PATH = "/app/data/bm25_index.pkl"
+import re
+
+def _tokenize(text: str) -> list:
+    return re.findall(r'\w+', text.lower())
+
+BM25_INDEX_PATH = "data/bm25_index.pkl"
 
 class BM25Store:
     _instance = None
@@ -25,7 +30,7 @@ class BM25Store:
         new_chunks: [{"id": str, "text": str, "metadata": dict}]
         """
         self.corpus.extend(new_chunks)
-        tokenized_corpus = [chunk["text"].split(" ") for chunk in self.corpus]
+        tokenized_corpus = [_tokenize(chunk["text"]) for chunk in self.corpus]
         self.bm25 = BM25Okapi(tokenized_corpus)
         self.save()
 
@@ -51,7 +56,7 @@ class BM25Store:
         if not self.bm25 or not self.corpus:
             return []
             
-        tokenized_query = query.split(" ")
+        tokenized_query = _tokenize(query)
         scores = self.bm25.get_scores(tokenized_query)
         
         # Get top k indices

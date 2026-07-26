@@ -3,6 +3,7 @@ from backend.retrieval.dense import ChromaDBStore
 from backend.retrieval.sparse import BM25Store
 from backend.retrieval.reranker import Reranker
 from backend.ingestion.embedder import embed_texts
+from backend.retrieval.knowledge_graph import KnowledgeGraph
 import time
 import structlog
 
@@ -71,6 +72,30 @@ def hybrid_search(query: str, top_k: int = 5) -> Dict[str, Any]:
     final_hits = reranker.rerank(query, fused_candidates, top_k)
     rerank_ms = int((time.time() - rerank_start) * 1000)
     
+    # 6. Knowledge Graph Augmentation
+    try:
+        kg = KnowledgeGraph.get_instance()
+        # Extract key entities from query (simple: use nouns/capitalized words)
+        import re
+        query_entities = re.findall(r'[A-Z][a-z]+(?:\s[A-Z][a-z]+)*', query)
+        if not query_entities:
+            query_entities = query.split()[:3]  # Fallback: first 3 words
+        
+        graph_results = kg.query_graph(query_entities, max_hops=2)
+        
+        if graph_results:
+            # Add graph context as additional chunks
+            for gr in graph_results[:3]:
+                graph_chunk = {
+                    "id": f"kg_{gr['subject']}_{gr['object']}",
+                    "text": f"[Knowledge Graph] {gr['subject']} {gr['relation']} {gr['object']}. Context: {gr['context']}",
+                    "metadata": {"source": gr["source"], "chunk_type": "graph"},
+                    "rerank_score": 0.5  # Moderate score
+                }
+                final_hits.append(graph_chunk)
+    except Exception as e:
+        logger.warning("KG augmentation failed", error=str(e))
+    
     total_ms = int((time.time() - start_time) * 1000)
     
     logger.info("Hybrid search complete", 
@@ -85,5 +110,15 @@ def hybrid_search(query: str, top_k: int = 5) -> Dict[str, Any]:
                 
     return {
         "chunks": final_hits,
-        "latency_ms": total_ms
+        "latency_ms": total_ms,
+        "trace": {
+             "embed_ms": embed_ms,
+             "dense_ms": dense_ms,
+             "sparse_ms": sparse_ms,
+             "fusion_ms": fusion_ms,
+             "rerank_ms": rerank_ms,
+             "dense_hits": len(dense_hits),
+             "sparse_hits": len(sparse_hits),
+             "fused_candidates": len(fused_candidates)
+         }
     }

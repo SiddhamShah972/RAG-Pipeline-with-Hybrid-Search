@@ -24,7 +24,7 @@ class ChromaDBStore:
         )
 
     def upsert(self, ids: List[str], embeddings: List[List[float]], documents: List[str], metadatas: List[Dict[str, Any]]):
-        self.collection.add(
+        self.collection.upsert(
             ids=ids,
             embeddings=embeddings,
             documents=documents,

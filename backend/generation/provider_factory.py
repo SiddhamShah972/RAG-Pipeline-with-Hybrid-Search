@@ -5,15 +5,23 @@ import structlog
 
 logger = structlog.get_logger()
 
+_generator_cache = None
+
 def get_generator():
+    global _generator_cache
+    if _generator_cache is not None:
+        return _generator_cache
+
     provider = settings.LLM_PROVIDER.lower()
     
     if provider == "gemini":
         logger.info("Using Gemini generator")
-        return GeminiGenerator()
+        _generator_cache = GeminiGenerator()
     elif provider == "ollama":
         logger.info("Using Ollama generator")
-        return OllamaGenerator()
+        _generator_cache = OllamaGenerator()
     else:
         logger.warning(f"Unknown provider {provider}, falling back to Gemini")
-        return GeminiGenerator()
+        _generator_cache = GeminiGenerator()
+        
+    return _generator_cache

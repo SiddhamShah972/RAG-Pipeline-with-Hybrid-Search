@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-3.5-flash"
     LLM_PROVIDER: str = "gemini"
     OLLAMA_HOST: str = "http://ollama:11434"
     OLLAMA_MODEL: str = "phi3:mini"
@@ -9,7 +10,7 @@ class Settings(BaseSettings):
     CHROMA_HOST: str = "chromadb"
     CHROMA_PORT: int = 8000
     
-    TOP_K_DEFAULT: int = 5
+    TOP_K_DEFAULT: int = 15
     EMBED_BATCH_SIZE: int = 32
     EMBED_DEVICE: str = "cuda"
     

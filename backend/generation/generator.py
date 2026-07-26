@@ -7,7 +7,7 @@ import tenacity
 class GeminiGenerator:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("models/gemini-3.5-flash")
+        self.model = genai.GenerativeModel(settings.GEMINI_MODEL)
 
     @tenacity.retry(stop=tenacity.stop_after_attempt(3), wait=tenacity.wait_exponential(multiplier=1, min=2, max=10))
     def generate(self, query: str, chunks: List[Dict[str, Any]]) -> Tuple[str, List[str]]:
@@ -30,6 +30,7 @@ class GeminiGenerator:
 If the answer is not contained in the context, reply exactly with: "Not found in documents."
 Do not hallucinate or use outside knowledge.
 For every claim you make, you MUST cite the source using the inline format [N] where N is the context block number.
+If the retrieved context contains a table, or if the user asks for a table, you MUST present your answer as a properly formatted Markdown table.
 
 Context Blocks:
 {context_str}

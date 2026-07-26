@@ -6,12 +6,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv for blazing fast python package installation
+RUN pip install uv
+
 WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
 COPY requirements-eval.txt .
-RUN pip install --no-cache-dir -r requirements.txt -r requirements-eval.txt
+RUN uv pip install --system --no-cache-dir -r requirements.txt -r requirements-eval.txt
 
 # Copy source code
 COPY backend/ /app/backend/
